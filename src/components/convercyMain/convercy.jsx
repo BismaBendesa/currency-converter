@@ -8,6 +8,7 @@ export default function CurrencyConverter() {
   const [amount, setAmount] = useState(null);
   const [result, setResult] = useState(null);
   const [countryFrom, setCountryFrom] = useState(null);
+  const [submitStatus, setSubmitStatus] = useState(true);
 
   // const currencys = [
   //   {
@@ -133,10 +134,11 @@ export default function CurrencyConverter() {
                   <option value="IDR">IDR</option>
                 </select>
                 <input
-                  // type="number"
+                  type="number"
                   placeholder="Masukkan nominal"
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={(e) => setAmount(e.target.value.toString())}
+                  onWheel={(e) => e.target.blur()}
                 />
               </div>
             </div>
@@ -167,6 +169,12 @@ export default function CurrencyConverter() {
                   />
               </div>
             </div>
+            
+            {/* Button untuk submit konversi */}
+            {/* <button 
+              type="submit"
+              onClick={() => setSubmitStatus(prev => !prev)}
+            >Konversi</button> */}
           </div>
         </div>
       </div>
