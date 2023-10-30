@@ -100,7 +100,8 @@ export default function CurrencyConverter() {
                   type="number"
                   placeholder="Masukkan nominal"
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={(e) => setAmount(e.target.value.toString())}
+                  onWheel={(e) => e.target.blur()}
                 />
               </div>
             </div>
@@ -130,6 +131,12 @@ export default function CurrencyConverter() {
                 <input value={result} placeholder="Hasil Konversi" />
               </div>
             </div>
+            
+            {/* Button untuk submit konversi */}
+            {/* <button 
+              type="submit"
+              onClick={() => setSubmitStatus(prev => !prev)}
+            >Konversi</button> */}
           </div>
         </div>
       </div>
