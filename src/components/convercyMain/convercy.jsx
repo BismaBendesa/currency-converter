@@ -7,54 +7,6 @@ export default function CurrencyConverter() {
   const [fromCurrency, setFromCurrency] = useState(null);
   const [amount, setAmount] = useState(null);
   const [result, setResult] = useState(null);
-  const [countryFrom, setCountryFrom] = useState(null);
-
-  // const currencys = [
-  //   {
-  //     nama: "United States Dollar",
-  //     value: "USD",
-  //   },
-  //   {
-  //     nama: "Australian Dollar",
-  //     value: "AUD",
-  //   },
-  //   {
-  //     nama: "Singapore Dollar",
-  //     value: "SGD",
-  //   },
-  //   {
-  //     nama: "Canadian Dollar",
-  //     value: "CAD",
-  //   },
-  //   {
-  //     nama: "British Pound Sterling",
-  //     value: "GBP",
-  //   },
-  //   {
-  //     nama: "Euro",
-  //     value: "EUR",
-  //   },
-  //   {
-  //     nama: "Swiss Franc",
-  //     value: "CHF",
-  //   },
-  //   {
-  //     nama: "Japanese Yen",
-  //     value: "JPY",
-  //   },
-  //   {
-  //     nama: "New Zeeland Dollar",
-  //     value: "NZD",
-  //   },
-  //   {
-  //     nama: "South Korean Won",
-  //     value: "KRW",
-  //   },
-  //   {
-  //     nama: "Indonesian Rupiah",
-  //     value: "IDR",
-  //   },
-  // ];
 
   useEffect(() => {
     fetchCurrencyConversion();
@@ -79,15 +31,26 @@ export default function CurrencyConverter() {
         setResult(data.result); // Gantilah properti yang sesuai dengan respons API Anda
       })
       .catch((error) => console.log("Error:", error));
-
-    // fetch("https://api.apilayer.com/currency_data/list", requestOptions)
-    //   .then((response) => response.json()) // Menggunakan response.json() untuk menguraikan respons JSON
-    //   .then((data) => {
-    //     // data sekarang berisi daftar mata uang
-    //     console.log(data);
-    //   })
-    //   .catch((error) => console.log("error", error));
   };
+
+  const pecahan = [0];
+  let nominal = { result };
+  const pecahanValues = [
+    "100000",
+    "50000",
+    "20000",
+    "10000",
+    "5000",
+    "2000",
+    "1000",
+  ];
+
+  for (let i = 0; i < 7; i++) {
+    if (nominal >= pecahanValues[i]) {
+      pecahan[i] = nominal / pecahanValues[i];
+      nominal = nominal % pecahanValues[i];
+    }
+  }
 
   return (
     <div>
@@ -97,7 +60,7 @@ export default function CurrencyConverter() {
             Konversi Nilai Tukar Mata Uang <span>Dunia</span>
           </h1>
           <p>
-            Konversi dari {countryFrom} ke {toCurrency} secara realtime
+            Konversi dari {fromCurrency} ke {toCurrency} secara realtime
           </p>
         </div>
         <div className="container-form">
@@ -112,15 +75,16 @@ export default function CurrencyConverter() {
               <div className="form-input-konversi">
                 <select
                   value={fromCurrency}
-                  name={countryFrom}
                   onChange={(e) => {
                     setFromCurrency(e.target.value);
-                    setCountryFrom(e.target.id);
-                    }
-                  }
+                  }}
                 >
-                  <option value="" disabled selected> </option>
-                  <option value="USD">USD</option>
+                  <option value="" disabled selected>
+                    {" "}
+                  </option>
+                  <option value="USD" id="United States Dollar">
+                    USD
+                  </option>
                   <option value="AUD">AUD</option>
                   <option value="SGD">SGD</option>
                   <option value="CAD">CAD</option>
@@ -133,7 +97,7 @@ export default function CurrencyConverter() {
                   <option value="IDR">IDR</option>
                 </select>
                 <input
-                  // type="number"
+                  type="number"
                   placeholder="Masukkan nominal"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
@@ -148,7 +112,9 @@ export default function CurrencyConverter() {
                   value={toCurrency}
                   onChange={(e) => setToCurrency(e.target.value)}
                 >
-                  <option value="" disabled selected> </option>
+                  <option value="" disabled selected>
+                    {" "}
+                  </option>
                   <option value="USD">USD</option>
                   <option value="AUD">AUD</option>
                   <option value="SGD">SGD</option>
@@ -161,14 +127,15 @@ export default function CurrencyConverter() {
                   <option value="KRW">KRW</option>
                   <option value="IDR">IDR</option>
                 </select>
-                <input 
-                  value={result} 
-                  placeholder="Hasil Konversi"
-                  />
+                <input value={result} placeholder="Hasil Konversi" />
               </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="container-tukaran">
+        <p>{pecahan[1]}</p>
       </div>
     </div>
   );
