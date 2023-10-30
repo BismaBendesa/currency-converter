@@ -8,7 +8,6 @@ export default function CurrencyConverter() {
   const [amount, setAmount] = useState(null);
   const [result, setResult] = useState(null);
   const [countryFrom, setCountryFrom] = useState(null);
-  const [submitStatus, setSubmitStatus] = useState(true);
 
   // const currencys = [
   //   {
