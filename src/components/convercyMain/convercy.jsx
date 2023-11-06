@@ -8,6 +8,12 @@ export default function CurrencyConverter() {
   const [amount, setAmount] = useState(null);
   const [result, setResult] = useState(null);
 
+  const [denominationCounts, setDenominationCounts] = useState([]);
+
+  const currencyDenominations = [
+    100000, 50000, 20000, 10000, 5000, 2000, 1000, 500,
+  ];
+
   useEffect(() => {
     fetchCurrencyConversion();
   }, [toCurrency, fromCurrency, amount]);
@@ -28,29 +34,24 @@ export default function CurrencyConverter() {
     fetch(apiUrl, requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        setResult(data.result); // Gantilah properti yang sesuai dengan respons API Anda
+        setResult(data.result);
+        calculateDenominationCounts(data.result);
       })
       .catch((error) => console.log("Error:", error));
   };
 
-  const pecahan = [0];
-  let nominal = { result };
-  const pecahanValues = [
-    "100000",
-    "50000",
-    "20000",
-    "10000",
-    "5000",
-    "2000",
-    "1000",
-  ];
+  //set fungsi pembagian ke masing-masing nilai mata uang (rupiah)
+  const calculateDenominationCounts = (conversionResult) => {
+    let remainingAmount = conversionResult;
 
-  for (let i = 0; i < 7; i++) {
-    if (nominal >= pecahanValues[i]) {
-      pecahan[i] = nominal / pecahanValues[i];
-      nominal = nominal % pecahanValues[i];
-    }
-  }
+    const counts = currencyDenominations.map((denomination) => {
+      const count = Math.floor(remainingAmount / denomination);
+      remainingAmount = remainingAmount % denomination;
+      return count;
+    });
+
+    setDenominationCounts(counts);
+  };
 
   return (
     <div>
@@ -131,7 +132,7 @@ export default function CurrencyConverter() {
                 <input value={result} placeholder="Hasil Konversi" />
               </div>
             </div>
-            
+
             {/* Button untuk submit konversi */}
             {/* <button 
               type="submit"
@@ -142,7 +143,20 @@ export default function CurrencyConverter() {
       </div>
 
       <div className="container-tukaran">
-        <p>{pecahan[1]}</p>
+        <div className="bg-radius">
+          <div className="judul-tukaran">
+            <h1>Jumlah pecahan mata uang IDR :</h1>
+          </div>
+          <div className="hasil-tukaran"> 
+              {currencyDenominations.map((denomination, index) => {
+                return (
+                  <div key={index} className="nominal">
+                    {denomination} Rupiah: {denominationCounts[index]} lembar
+                  </div>
+                );
+              })}
+          </div>
+        </div>
       </div>
     </div>
   );
