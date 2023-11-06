@@ -41,17 +41,24 @@ export default function CurrencyConverter() {
   };
 
   //set fungsi pembagian ke masing-masing nilai mata uang (rupiah)
-  const calculateDenominationCounts = (conversionResult) => {
-    let remainingAmount = conversionResult;
+    const calculateDenominationCounts = (conversionResult) => {
+      let remainingAmount = conversionResult;
 
-    const counts = currencyDenominations.map((denomination) => {
-      const count = Math.floor(remainingAmount / denomination);
-      remainingAmount = remainingAmount % denomination;
-      return count;
-    });
+      const counts = currencyDenominations.map((denomination) => {
+        const count = Math.floor(remainingAmount / denomination);
+        remainingAmount = remainingAmount % denomination;
+        return count;
+      });
 
-    setDenominationCounts(counts);
-  };
+      setDenominationCounts(counts);
+    };
+
+    const currencyDenomination = {
+      USD : [1, 5, 10],
+      IDR : [1000, 2000, 5000]
+    }
+    
+    console.log(currencyDenomination);
 
   return (
     <div>
@@ -153,6 +160,8 @@ export default function CurrencyConverter() {
                   <div key={index} className="nominal">
                     {denomination} Rupiah: {denominationCounts[index]} lembar
                   </div>
+
+                  
                 );
               })}
           </div>
