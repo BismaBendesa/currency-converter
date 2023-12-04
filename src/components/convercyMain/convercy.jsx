@@ -2,6 +2,20 @@
 import "./convercy.css";
 import { useState, useEffect } from "react";
 
+const currencyDenominationsMap = {
+  USD: [100, 50, 20, 10, 5, 1],
+  AUD: [100, 50, 20, 10, 5, 2, 1],
+  SGD: [1000, 500, 200, 100, 50, 10],
+  IDR: [100000, 50000, 20000, 10000, 5000, 2000, 1000, 500],
+  CAD: [100, 50, 20, 10, 5, 1, 0.5, 0.25, 0.1, 0.05, 0.01],
+  GBP: [100, 50, 20, 10, 5, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01],
+  EUR: [500, 200, 100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05, 0.01],
+  CHF: [1000, 200, 100, 50, 20, 10, 5, 2, 1],
+  JPY: [10000, 5000, 2000, 1000, 500, 100, 50, 10, 5, 1],
+  NZD: [100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1],
+  KRW: [50000, 10000, 5000, 1000, 500, 100, 50, 10],
+};
+
 export default function CurrencyConverter() {
   const [toCurrency, setToCurrency] = useState(null);
   const [fromCurrency, setFromCurrency] = useState(null);
@@ -9,10 +23,14 @@ export default function CurrencyConverter() {
   const [result, setResult] = useState(null);
 
   const [denominationCounts, setDenominationCounts] = useState([]);
+  const [currencyDenominations, setCurrencyDenominations] = useState([]);
 
-  const currencyDenominations = [
-    100000, 50000, 20000, 10000, 5000, 2000, 1000, 500,
-  ];
+  useEffect(() => {
+    if (toCurrency) {
+      setDenominationCounts([]);
+      setCurrencyDenominations(currencyDenominationsMap[toCurrency] || []);
+    }
+  }, [toCurrency]);
 
   useEffect(() => {
     fetchCurrencyConversion();
@@ -30,7 +48,6 @@ export default function CurrencyConverter() {
       headers: myHeaders,
     };
 
-    //console data nama mata uang
     fetch(apiUrl, requestOptions)
       .then((response) => response.json())
       .then((data) => {
@@ -40,26 +57,17 @@ export default function CurrencyConverter() {
       .catch((error) => console.log("Error:", error));
   };
 
-  //set fungsi pembagian ke masing-masing nilai mata uang (rupiah)
-    const calculateDenominationCounts = (conversionResult) => {
-      let remainingAmount = conversionResult;
+  const calculateDenominationCounts = (conversionResult) => {
+    let remainingAmount = conversionResult;
 
-      const counts = currencyDenominations.map((denomination) => {
-        const count = Math.floor(remainingAmount / denomination);
-        remainingAmount = remainingAmount % denomination;
-        return count;
-      });
+    const counts = currencyDenominations.map((denomination) => {
+      const count = Math.floor(remainingAmount / denomination);
+      remainingAmount = remainingAmount % denomination;
+      return count;
+    });
 
-      setDenominationCounts(counts);
-    };
-
-    const currencyDenomination = {
-      USD : [1, 5, 10],
-      IDR : [1000, 2000, 5000]
-    }
-    
-    console.log(currencyDenomination);
-
+    setDenominationCounts(counts);
+  };
   return (
     <div>
       <div className="container-utama">
@@ -87,12 +95,8 @@ export default function CurrencyConverter() {
                     setFromCurrency(e.target.value);
                   }}
                 >
-                  <option value="" disabled selected>
-                    {" "}
-                  </option>
-                  <option value="USD" id="United States Dollar">
-                    USD
-                  </option>
+                  <option value="" disabled selected>{" "}</option>
+                  <option value="USD">USD</option>
                   <option value="AUD">AUD</option>
                   <option value="SGD">SGD</option>
                   <option value="CAD">CAD</option>
@@ -121,9 +125,7 @@ export default function CurrencyConverter() {
                   value={toCurrency}
                   onChange={(e) => setToCurrency(e.target.value)}
                 >
-                  <option value="" disabled selected>
-                    {" "}
-                  </option>
+                  <option value="" disabled selected>{" "}</option>
                   <option value="USD">USD</option>
                   <option value="AUD">AUD</option>
                   <option value="SGD">SGD</option>
@@ -139,12 +141,6 @@ export default function CurrencyConverter() {
                 <input value={result} placeholder="Hasil Konversi" />
               </div>
             </div>
-
-            {/* Button untuk submit konversi */}
-            {/* <button 
-              type="submit"
-              onClick={() => setSubmitStatus(prev => !prev)}
-            >Konversi</button> */}
           </div>
         </div>
       </div>
@@ -152,19 +148,25 @@ export default function CurrencyConverter() {
       <div className="container-tukaran">
         <div className="bg-radius">
           <div className="judul-tukaran">
-            <h1>Jumlah pecahan mata uang IDR :</h1>
+            <h1>Jumlah Pecahan Yang Didapat :</h1>
           </div>
-          <div className="hasil-tukaran"> 
-              {currencyDenominations.map((denomination, index) => {
-                return (
-                  <div key={index} className="nominal">
-                    {denomination} Rupiah: {denominationCounts[index]} lembar
-                  </div>
+          <div className="hasil-tukaran">
+            {currencyDenominations.map((denomination, index) => {
+              const count = denominationCounts[index];
+              const backgroundColor = count === 0 ? "#eaeaea" : ""; // Warna latar belakang disetel ke #eaeaea jika count sama dengan 0
 
-                  
-                );
-              })}
+              return (
+                <div
+                  key={index}
+                  className="nominal"
+                  style={{ backgroundColor }}
+                >
+                  Pecahan {toCurrency} {denomination} | {count}x
+                </div>
+              );
+            })}
           </div>
+          
         </div>
       </div>
     </div>
